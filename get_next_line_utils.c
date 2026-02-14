@@ -6,7 +6,7 @@
 /*   By: ismonter <ismonter@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 16:00:26 by ismonter          #+#    #+#             */
-/*   Updated: 2026/02/08 16:11:15 by ismonter         ###   ########.fr       */
+/*   Updated: 2026/02/14 18:24:15 by ismonter         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,17 +59,19 @@ char	*ft_strdup(char *str)
 char	*ft_substr(char *str, int len)
 {
 	int		i;
-	char	*copy;
+	char	*substr;
 
 	i = 0;
-	copy = malloc(sizeof (char) * len + 1);
-	while (str[i] != '\0' && i < len)
+	substr = malloc(sizeof (char) * len + 1);
+	if (substr == NULL)
+		return (NULL);
+	while (len > i)
 	{
-		copy[i] = str[i];
+		substr[i] = str[i];
 		i++;
 	}
-	copy[i] = '\0';
-	return (copy);
+	substr[i] = '\0';
+	return (substr);
 }
 
 char	*ft_strjoin(char *s1, char *s2)
@@ -78,9 +80,11 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		j;
 	char	*sjoin;
 
-	i = ft_strlen(s1);
-	j = ft_strlen(s2);
-	sjoin = malloc(i + j + 1);
+	if (!s1)
+		return (ft_strdup(s2));
+	sjoin = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
+	if (sjoin == NULL)
+		return (NULL);
 	i = 0;
 	j = 0;
 	while (s1[i] != '\0')
@@ -97,14 +101,3 @@ char	*ft_strjoin(char *s1, char *s2)
 	sjoin[i] = '\0';
 	return (sjoin);
 }
-
-/*
-int	main(void)
-{
-	char *str = "holaoa";
-	
-	char c = 'a';
-	printf("%s", ft_strchr(str, c));
-	return (0);
-}
-*/

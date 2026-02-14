@@ -6,12 +6,16 @@
 /*   By: ismonter <ismonter@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 17:35:18 by ismonter          #+#    #+#             */
-/*   Updated: 2026/02/08 16:13:34 by ismonter         ###   ########.fr       */
+/*   Updated: 2026/02/14 18:14:15 by ismonter         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1
+# endif
 
 # include <stdio.h>
 # include <unistd.h>
