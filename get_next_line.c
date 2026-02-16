@@ -6,23 +6,30 @@
 /*   By: ismonter <ismonter@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 17:32:11 by ismonter          #+#    #+#             */
-/*   Updated: 2026/02/14 18:22:06 by ismonter         ###   ########.fr       */
+/*   Updated: 2026/02/16 17:50:37 by ismonter         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-/*
-void	*ft_free(char **buf, char **stored)
+
+char	*ft_check_bytes(int bytes_read, char **buf, char **stored)
 {
-	if (*buf != NULL)
+	if (bytes_read < 0)
+	{
 		free(*buf);
-	*buf = NULL;
-	if (*stored != NULL)
 		free(*stored);
-	*stored = NULL;
+		stored = NULL;
+		return (NULL);
+	}
+	if (bytes_read == 0)
+	{
+		free(*buf);
+		buf = NULL;
+		return (*stored);
+	}
 	return (NULL);
 }
-*/
+
 char	*ft_getline(char *stored, char *ptr_nl)
 {
 	char	*line;
@@ -45,19 +52,8 @@ char	*ft_read(int fd, char *stored)
 	while (!stored || !ft_strchr(stored, '\n'))
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
-		if (bytes_read < 0)
-		{
-			free(buf);
-			free(stored);
-			stored = NULL;
-			return (NULL);
-		}
-		if (bytes_read == 0)
-		{
-			free(buf);
-			buf = NULL;
-			return (stored);
-		}
+		if (bytes_read <= 0)
+			return (ft_check_bytes(bytes_read, &buf, &stored));
 		buf[bytes_read] = '\0';
 		aux = stored;
 		stored = ft_strjoin(stored, buf);
@@ -80,7 +76,10 @@ char	*get_next_line(int fd)
 	char		*aux;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
+	{
+		free(stored);
 		return (NULL);
+	}
 	stored = ft_read(fd, stored);
 	if (!stored)
 		return (NULL);
@@ -91,10 +90,7 @@ char	*get_next_line(int fd)
 		aux = ft_substr(ptr_nl + 1, ft_strlen(ptr_nl + 1));
 		free(stored);
 		if (!aux)
-		{
-			free(aux);
 			stored = NULL;
-		}
 		if (aux && *aux != '\0')
 			stored = aux;
 		else
@@ -113,11 +109,6 @@ char	*get_next_line(int fd)
 			stored = NULL;
 			return (line);
 		}
-	}
-	if (stored)
-	{
-		free(stored);
-		stored = NULL;
 	}
 	return (NULL);
 }
@@ -153,6 +144,7 @@ int	main(void)
 	printf("%s", get_next_line(fd));
 	printf("%s", get_next_line(fd));
 	printf("%s", get_next_line(fd));
+	printf("%s", get_next_line(fd));
 	close(fd);
 	return (0);
 }
@@ -161,10 +153,20 @@ int	main(void)
 int	main(void)
 {
 	int	fd;
+	char *line;
 
 	fd = open("prueba.txt", O_RDWR);
-	printf("%s", get_next_line(fd));
-	
-	
+	line = get_next_line(fd);
+	printf("%s", line);
+	free(line);
+	line = get_next_line(fd);
+	printf("%s", line);
+	free(line);
+	line = get_next_line(-1);
+	printf("%s\n", line);
+
+	printf("Hola caracola\n");
+	return (0);
+
 }
 */
