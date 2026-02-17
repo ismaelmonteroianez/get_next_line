@@ -6,7 +6,7 @@
 /*   By: ismonter <ismonter@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 17:32:11 by ismonter          #+#    #+#             */
-/*   Updated: 2026/02/16 17:50:37 by ismonter         ###   ########.fr       */
+/*   Updated: 2026/02/17 17:11:38 by ismonter         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,25 +18,39 @@ char	*ft_check_bytes(int bytes_read, char **buf, char **stored)
 	{
 		free(*buf);
 		free(*stored);
-		stored = NULL;
+		*stored = NULL;
 		return (NULL);
 	}
 	if (bytes_read == 0)
 	{
 		free(*buf);
-		buf = NULL;
+		*buf = NULL;
 		return (*stored);
 	}
 	return (NULL);
 }
 
-char	*ft_getline(char *stored, char *ptr_nl)
+char	*ft_get_line(char **stored)
 {
+	char	*ptr_nl;
 	char	*line;
-	int		pos;
+	char	*aux;
+	int		len;
 
-	pos = ptr_nl - stored + 1;
-	line = ft_substr(stored, pos);
+	ptr_nl = ft_strchr(*stored, '\n');
+	if (!ptr_nl)
+		return (NULL);
+	len = ptr_nl - *stored + 1;
+	line = ft_substr(*stored, len);
+	aux = ft_strdup(ptr_nl + 1);
+	free(*stored);
+	if (aux && *aux != '\0')
+		*stored = aux;
+	else
+	{
+		free(aux);
+		*stored = NULL;
+	}
 	return (line);
 }
 
@@ -71,9 +85,7 @@ char	*ft_read(int fd, char *stored)
 char	*get_next_line(int fd)
 {
 	static char	*stored;
-	char		*ptr_nl;
 	char		*line;
-	char		*aux;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 	{
@@ -83,23 +95,9 @@ char	*get_next_line(int fd)
 	stored = ft_read(fd, stored);
 	if (!stored)
 		return (NULL);
-	ptr_nl = ft_strchr(stored, '\n');
-	if (ptr_nl)
-	{
-		line = ft_getline(stored, ptr_nl);
-		aux = ft_substr(ptr_nl + 1, ft_strlen(ptr_nl + 1));
-		free(stored);
-		if (!aux)
-			stored = NULL;
-		if (aux && *aux != '\0')
-			stored = aux;
-		else
-    	{
-        	free(aux);
-        	stored = NULL;
-    	}
+	line = ft_get_line(&stored);
+	if (line)
 		return (line);
-	}
 	else
 	{
 		if (stored && *stored != '\0')
@@ -112,6 +110,7 @@ char	*get_next_line(int fd)
 	}
 	return (NULL);
 }
+
 /*
 int	main(void)
 {
@@ -149,7 +148,7 @@ int	main(void)
 	return (0);
 }
 */
-/*
+
 int	main(void)
 {
 	int	fd;
@@ -164,9 +163,5 @@ int	main(void)
 	free(line);
 	line = get_next_line(-1);
 	printf("%s\n", line);
-
-	printf("Hola caracola\n");
 	return (0);
-
 }
-*/
